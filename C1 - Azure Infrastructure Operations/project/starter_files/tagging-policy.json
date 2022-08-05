@@ -1,21 +1,29 @@
 {
-    "if": {
-        "allof": [
-            {
-                "field": "type",
-                "equals": "Microsoft.Compute/virtualMachines"
-            },
-            {
-                "field": "Microsoft.Compute/virtualMachines/osProfile.linuxConfiguration",
-                "exists": "True"
-            },
-            {
-                "field": "Microsoft.Compute/virtualMachines/osProfile.linuxConfiguration.disablePasswordAuthentication",
-                "equals": "false"
+  "properties": {
+        "displayName": "tagging-policy",
+        "description": "This policy ensures all indexed resources in your subscription have tags and deny deployment if they do not.",
+        "mode": "indexed",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Tags"
+        },
+        "parameters": {
+            "tagName": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Tag Name",
+                    "description": "Name of the tag, such as 'environment'"
+                }
             }
-        ]
-    },
-    "then": {
-        "effect": "audit"
+        },
+        "policyRule": {
+            "if": {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "exists": "false"
+            },
+            "then": {
+                "effect": "deny"
+            }
+        }
     }
 }
